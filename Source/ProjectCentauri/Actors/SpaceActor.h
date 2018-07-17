@@ -4,11 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-//#include "TeamInterface.h"
+#include "Gameplay/TeamInterface.h"
 #include "SpaceActor.generated.h"
 
+
+/**
+*	@brief SpaceActorClass Represent any SpaceObject that is not directly possesed.
+*/
 UCLASS()
-class PROJECTCENTAURI_API ASpaceActor : public AActor //, ITeamInterface
+class PROJECTCENTAURI_API ASpaceActor : public AActor // , public ITeamInterface
 {
 	GENERATED_BODY()
 	
@@ -22,10 +26,26 @@ protected:
 	UPROPERTY()
 		bool bCanAttach;
 
-	USceneComponent * RootAttach; // SpaceActors always attach on root.
-	
+	UPROPERTY()
+		bool bIsAttach;
+
+
+public:
+
+	FORCEINLINE bool GetCanAttach() const { return bCanAttach; }
+	FORCEINLINE bool GetIsAttach() const { return bIsAttach; }
+
+
+	//USceneComponent * RootAttach; // SpaceActors always attach on root. like any ChildActors actually
 	
 	TArray<USceneComponent *> OutAttach;
+
+
+	UPROPERTY()
+		float Hull; // Equivalent to life for most video games
+
+	UFUNCTION()
+		virtual float HullIntegrity(); // if below 1.0f can't be attached and is considered a space debris. 
 
 protected:
 	// Called when the game starts or when spawned
@@ -34,6 +54,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+
 
 	
 	

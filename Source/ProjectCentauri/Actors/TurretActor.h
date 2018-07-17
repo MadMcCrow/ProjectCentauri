@@ -3,13 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TurretData.h"
-#include "GameFramework/Actor.h"
-#include "TeamInterface.h"
+#include "Actors/SpaceActor.h"
+#include "Gameplay/TeamInterface.h"
 #include "TurretActor.generated.h"
 
 UCLASS()
-class PROJECTCENTAURI_API ATurretActor : public AActor , public ITeamInterface
+class PROJECTCENTAURI_API ATurretActor : public ASpaceActor , public ITeamInterface
 {
 	GENERATED_BODY()
 	
@@ -22,12 +21,6 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Turret")
-	struct FTurretData TurretStatistics;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turret", meta = (ExposeOnSpawn = "true"))
-	int TurretDataIndex = 0;
-
 
 	UFUNCTION(BlueprintCallable, Category = "Fire")
 		bool CanFire();

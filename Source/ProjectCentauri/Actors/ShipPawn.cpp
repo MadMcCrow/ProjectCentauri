@@ -2,10 +2,8 @@
 
 #include "ShipPawn.h"
 #include "Components/InputComponent.h"
-#include "Components/ShipComponent.h"
 #include "GameFramework/SpringArmComponent.h" // Spring Arm
 #include "Camera/CameraComponent.h" // Camera
-#include "Components/ShipMovementComponent.h"
 
 
 //Axis Binding
@@ -19,7 +17,7 @@ AShipPawn::AShipPawn()
 {
  	// Set this pawn to call Tick() every frame.
 	PrimaryActorTick.bCanEverTick = true;
-	ShipComponent = CreateDefaultSubobject<UShipComponent>(TEXT("Spaceship"));
+	ShipComponent = CreateDefaultSubobject<UChildActorComponent>(TEXT("Spaceship"));
 	RootComponent = ShipComponent;
 	
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -33,8 +31,8 @@ AShipPawn::AShipPawn()
 	CameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	CameraComponent->bUsePawnControlRotation = false;	// Camera does not rotate relative to arm
 
-	MovementComponent = CreateDefaultSubobject<UShipMovementComponent>(TEXT("Movement Component"));
-	MovementComponent->SetAcceleration(Acceleration);
+	//MovementComponent = CreateDefaultSubobject<UShipMovementComponent>(TEXT("Movement Component"));
+	//MovementComponent->SetAcceleration(Acceleration);
 	
 
 }
@@ -51,7 +49,7 @@ void AShipPawn::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	ApplyMovement();
 #if !UE_BUILD_SHIPPING
-	UE_LOG(LogTemp, Display, TEXT("Ship pawn ticking"));
+	UE_LOG(LogActor, Display, TEXT("Ship pawn ticking"));
 #endif
 
 }
@@ -74,7 +72,7 @@ void AShipPawn::ApplyMovement()
 	if(bCanMove)
 	{
 		FVector InputVector = FVector(GetInputAxisValue(MoveForwardBinding), GetInputAxisValue(MoveRightBinding), 0 );
-		MovementComponent->ApplyMovement(InputVector);
+		//MovementComponent->ApplyMovement(InputVector);
 	}
 }
 

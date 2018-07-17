@@ -4,8 +4,7 @@
 // minimum includes
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "ShipData.h"
-#include "TeamInterface.h"
+#include "Gameplay/TeamInterface.h"
 #include "ShipPawn.generated.h"
 
 
@@ -26,18 +25,14 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Space ship | Class")
-		FShipData ShipClassStruct;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Space ship | Class")
-	class UShipComponent* ShipComponent;
+	class UChildActorComponent* ShipComponent;
 
 	class UCameraComponent* CameraComponent;
 	class USpringArmComponent* CameraBoom;
-	class UShipMovementComponent* MovementComponent;
-	float Acceleration = 100;
-	float RealMass = 100;
+	//class UShipMovementComponent* MovementComponent;
+
 	bool bCanMove = true;
 
 public:	
@@ -47,7 +42,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	/** Returns Shipsubobject **/
-	FORCEINLINE class UShipComponent* GetShipComponent() const { return ShipComponent; }
+	FORCEINLINE class UActorComponent* GetShipComponent() const { return ShipComponent; }
 	/** Returns CameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetCameraComponent() const { return CameraComponent; }
 	/** Returns CameraBoom subobject **/
