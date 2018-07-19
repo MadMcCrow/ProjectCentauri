@@ -23,17 +23,17 @@ public:
 
 protected:
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 		bool bCanAttach;
 
 	UPROPERTY()
-		bool bIsAttach;
+		bool bIsAttached;
 
 
 public:
 
 	FORCEINLINE bool GetCanAttach() const { return bCanAttach; }
-	FORCEINLINE bool GetIsAttach() const { return bIsAttach; }
+	FORCEINLINE bool GetIsAttached() const { return bIsAttached; }
 
 
 	//USceneComponent * RootAttach; // SpaceActors always attach on root. like any ChildActors actually
@@ -54,6 +54,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
 
 
 

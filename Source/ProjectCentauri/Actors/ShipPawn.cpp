@@ -4,9 +4,12 @@
 #include "Components/InputComponent.h"
 #include "GameFramework/SpringArmComponent.h" // Spring Arm
 #include "Camera/CameraComponent.h" // Camera
+#include "Components/ShipMovementComponent.h"
+#include "SpaceActor.h"
 
 
 //Axis Binding
+const FName AShipPawn::EngineThrustBinding("EngineThrust");
 const FName AShipPawn::MoveForwardBinding("MoveForward");
 const FName AShipPawn::MoveRightBinding("MoveRight");
 const FName AShipPawn::FireForwardBinding("FireForward");
@@ -23,7 +26,7 @@ AShipPawn::AShipPawn()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->bAbsoluteRotation = true; // Don't want arm to rotate when ship does
-	CameraBoom->TargetArmLength = 1000.f;
+	CameraBoom->TargetArmLength = 3000.f;
 	CameraBoom->RelativeRotation = FRotator(-70.f, 0.f, 0.f);
 	CameraBoom->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
 
@@ -31,7 +34,7 @@ AShipPawn::AShipPawn()
 	CameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	CameraComponent->bUsePawnControlRotation = false;	// Camera does not rotate relative to arm
 
-	//MovementComponent = CreateDefaultSubobject<UShipMovementComponent>(TEXT("Movement Component"));
+	MovementComponent = CreateDefaultSubobject<UShipMovementComponent>(TEXT("Movement Component"));
 	//MovementComponent->SetAcceleration(Acceleration);
 	
 
@@ -42,6 +45,7 @@ void AShipPawn::BeginPlay()
 {
 	Super::BeginPlay();
 }
+
 
 // Called every frame
 void AShipPawn::Tick(float DeltaTime)
@@ -59,6 +63,7 @@ void AShipPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	check(PlayerInputComponent);
 	// set up gameplay key bindings
+	PlayerInputComponent->BindAxis(EngineThrustBinding);
 	PlayerInputComponent->BindAxis(MoveForwardBinding);
 	PlayerInputComponent->BindAxis(MoveRightBinding);
 	PlayerInputComponent->BindAxis(FireForwardBinding);
@@ -74,5 +79,10 @@ void AShipPawn::ApplyMovement()
 		FVector InputVector = FVector(GetInputAxisValue(MoveForwardBinding), GetInputAxisValue(MoveRightBinding), 0 );
 		//MovementComponent->ApplyMovement(InputVector);
 	}
+}
+
+void AShipPawn::UpdateChildActors()
+{
+	// for now we do nothing, just so we're in the clear
 }
 

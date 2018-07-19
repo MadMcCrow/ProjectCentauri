@@ -5,11 +5,14 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Gameplay/TeamInterface.h"
+#include "ChildInterface.h"
 #include "ShipPawn.generated.h"
 
-
+/**
+*	This is the main part of a spaceship
+*/
 UCLASS()
-class PROJECTCENTAURI_API AShipPawn : public APawn, public ITeamInterface
+class PROJECTCENTAURI_API AShipPawn : public APawn, public ITeamInterface, public IChildInterface
 {
 	GENERATED_BODY()
 public:
@@ -17,6 +20,7 @@ public:
 	AShipPawn();
 
 	// Static names for axis bindings
+	static const FName EngineThrustBinding;
 	static const FName MoveForwardBinding;
 	static const FName MoveRightBinding;
 	static const FName FireForwardBinding;
@@ -31,9 +35,34 @@ protected:
 
 	class UCameraComponent* CameraComponent;
 	class USpringArmComponent* CameraBoom;
-	//class UShipMovementComponent* MovementComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UShipMovementComponent* MovementComponent;
 
 	bool bCanMove = true;
+
+
+private:
+	/**
+	 *	This Array contains pointer to all the Actors we attached to the spaceship
+	 */
+	TArray<AActor*> ChildActorList;
+
+protected:
+
+	FORCEINLINE TArray<AActor*> GetChildActorList() const { return ChildActorList; }
+
+
+
+
+#if 0
+protected:
+	UPROPERTY()
+		TMap<AActor*, FVector> EnginesAttached;
+
+#endif // 0
+
+
 
 public:	
 
@@ -61,5 +90,7 @@ protected:
 	FORCEINLINE virtual void SetTeam(const FTeam &NewTeam) override { SpaceShipTeam = NewTeam; }
 	FORCEINLINE virtual FTeam & GetTeam()  override { return SpaceShipTeam; }
 
-		
+	// Child Interface
+public: 
+	virtual void UpdateChildActors() override;
 };

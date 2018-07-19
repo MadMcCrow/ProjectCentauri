@@ -19,6 +19,9 @@ public :
 	AThrusterActor();
 
 protected:
+
+
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float InpulsePower = 100;
 
@@ -29,8 +32,21 @@ protected:
 	UFUNCTION()
 		virtual void DoThrust();
 
-	
-	
+private:
+	/**
+	 *	@brief ThrusterMeshComponent
+	 *	Static mesh representing the Thruster
+	 */
+	UPROPERTY(Category = Mesh, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		class UStaticMeshComponent * ThrusterMeshComponent;
+
+protected:
+	/**
+	 *	@brief Thruster
+	 *	the Physical Thruster
+	 */
+	UPROPERTY(Category = Thruster, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		class UPhysicsThrusterComponent * Thruster;
 	
 	
 };
