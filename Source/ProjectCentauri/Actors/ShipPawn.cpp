@@ -2,10 +2,16 @@
 
 #include "ShipPawn.h"
 #include "Components/InputComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h" // Spring Arm
 #include "Camera/CameraComponent.h" // Camera
 #include "Components/ShipMovementComponent.h"
 #include "SpaceActor.h"
+
+#if WITH_EDITOR
+#include "Components/ArrowComponent.h"
+#endif // WITH_EDITOR
+
 
 
 //Axis Binding
@@ -19,9 +25,10 @@ const FName AShipPawn::FireRightBinding("FireRight");
 AShipPawn::AShipPawn()
 {
  	// Set this pawn to call Tick() every frame.
-	PrimaryActorTick.bCanEverTick = true;
-	ShipComponent = CreateDefaultSubobject<UChildActorComponent>(TEXT("Spaceship"));
-	RootComponent = ShipComponent;
+	PrimaryActorTick.bCanEverTick = false;
+
+	PawnBaseMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Spaceship"));
+	RootComponent = PawnBaseMeshComponent;
 	
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -36,8 +43,20 @@ AShipPawn::AShipPawn()
 
 	MovementComponent = CreateDefaultSubobject<UShipMovementComponent>(TEXT("Movement Component"));
 	//MovementComponent->SetAcceleration(Acceleration);
-	
 
+
+#if WITH_EDITOR
+	auto Arrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
+	Arrow->ArrowColor = FColor::Cyan;
+	Arrow->EditorScale = 5;
+	Arrow->SetupAttachment(RootComponent);
+#endif // WITH_EDITOR
+
+}
+
+void AShipPawn::OnConstruction(const FTransform & Transform)
+{
+	
 }
 
 // Called when the game starts or when spawned
@@ -79,10 +98,5 @@ void AShipPawn::ApplyMovement()
 		FVector InputVector = FVector(GetInputAxisValue(MoveForwardBinding), GetInputAxisValue(MoveRightBinding), 0 );
 		//MovementComponent->ApplyMovement(InputVector);
 	}
-}
-
-void AShipPawn::UpdateChildActors()
-{
-	// for now we do nothing, just so we're in the clear
 }
 

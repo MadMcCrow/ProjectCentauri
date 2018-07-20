@@ -22,10 +22,13 @@ protected:
 
 
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Thruster")
 		float InpulsePower = 100;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Thruster")
+		FVector LocalThrustDirection = FVector::ForwardVector;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Thruster")
 		FVector RelativeThrustDirection = FVector::ForwardVector;
 
 
@@ -41,12 +44,23 @@ private:
 		class UStaticMeshComponent * ThrusterMeshComponent;
 
 protected:
+
+#if 0
 	/**
-	 *	@brief Thruster
-	 *	the Physical Thruster
-	 */
+	*	@brief Thruster
+	*	the Physical Thruster
+	*/
 	UPROPERTY(Category = Thruster, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UPhysicsThrusterComponent * Thruster;
+
+#endif // 0
+
+	/**
+	*	@brief PawnBaseComponent
+	*	The object onto wich we should apply the force of the thruster
+	*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Thruster")
+		class UPrimitiveComponent * PawnBaseComponent;
 	
-	
+
 };

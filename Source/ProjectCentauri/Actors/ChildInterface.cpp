@@ -4,49 +4,80 @@
 //#include "GameFramework/Actor.h"
 #include "Actors/SpaceActor.h"
 #include "Engine/World.h"
-
+#include "Components/AttachComponent.h"
 // Add default functionality here for any IChildInterface functions that are not pure virtual.
 
-void IChildInterface::GetAttachedActorsRecursively(TArray<AActor*>& Out)
+void IChildInterface::GetAttachedActorsRecursively(TArray<AActor*>& Out, bool bOnlyInterface)
 {
-	//Out.Empty(); // Check if this is not a stupid idea
 	TArray<AActor *> Root;
 	auto Actor = Cast<AActor>(this);
 	if (!Actor)
 		return;
 	Actor->GetAttachedActors(Root);
-	//Out.Append(Root);
-	for (auto it : Root)
+	if (bOnlyInterface)
 	{
-		if (it->Implements<UChildInterface>())
-			Out.Add(it);
+		for (auto it : Root)
+		{
+			if (it->Implements<UChildInterface>())
+				if (!Out.Contains(it))
+					Out.Add(it);
+		}
 	}
-	for (auto it : Out)
+	else {
+		for (auto it : Root)
+		{
+				if (!Out.Contains(it))
+					Out.Add(it);
+		}
+	}
+	// Then call this loop --- Don't worry the Compiler should be able to optimize by merging with the other loops
+	for (auto it : Root) // Use the array ( not containing them all)
 	{
 		auto AsInterface = Cast<IChildInterface>(it);
 		if (AsInterface)
 			AsInterface->GetAttachedActorsRecursively(Out);
 	}
-
 }
 
-bool IChildInterface::AddChildActor(USceneComponent * Parent, TSubclassOf<class ASpaceActor> ClassToSpawn, FName Socket)
+AActor * IChildInterface::AddChildActor(USceneComponent * Parent, TSubclassOf<class ASpaceActor> ClassToSpawn, const FTransform & InTransform, FName Socket)
 {
 	auto Actor = Cast<AActor>(this);
 	if (!Actor)
-		return false;
+		return nullptr;
 	auto World = Actor->GetWorld();
 	if(!World)
-		return false;
+		return nullptr;
 	// first prepare the parameters
 	FActorSpawnParameters SpawnParam;
 	SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	SpawnParam.Owner = Actor;
 	SpawnParam.bAllowDuringConstructionScript = true; // maybe not necessary but better be safe than sorry
-	auto NewActor = World->SpawnActor<ASpaceActor>(ClassToSpawn, Parent->GetComponentLocation() , Parent->GetComponentRotation(), SpawnParam);
+	auto NewActor = World->SpawnActor<ASpaceActor>(ClassToSpawn, InTransform,  SpawnParam);
 	if (!NewActor)
-		return false;
-	NewActor->AttachToComponent(Parent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, Socket);
-	return true;
+		return nullptr;
+	FAttachmentTransformRules AttachRules = FAttachmentTransformRules::KeepRelativeTransform;
+	AttachRules.bWeldSimulatedBodies = true;
+	NewActor->AttachToComponent(Parent, AttachRules, Socket);
 
+	NewActor->SetOwner(Actor);
+
+	UpdateChildActors();
+
+	return NewActor;
+}
+
+bool IChildInterface::GetAvaibleAttachPoints(TArray<FTransform>& Out)
+{
+	auto Actor = Cast<AActor>(this);
+	if (!Actor)
+		return false;
+	Out.Empty();
+	auto Array = Actor->GetComponentsByClass(UAttachComponent::StaticClass());
+	for (auto it : Array)
+	{
+		auto Attach = Cast<UAttachComponent>(it);
+		if(Attach)
+			Out.Add(Attach->GetRelativeTransform());
+	}
+	return true;
 }

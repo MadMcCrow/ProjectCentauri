@@ -1,34 +1,19 @@
 // Copyright 2018 Noe PERARD-GAYOT
 
 #include "AttachComponent.h"
+#if WITH_EDITOR
+#include "Components/ArrowComponent.h"
+#endif // WITH_EDITOR
 
 
-// Sets default values for this component's properties
-UAttachComponent::UAttachComponent()
+
+UAttachComponent::UAttachComponent() : Super()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	Owner = GetOwner();
+#if WITH_EDITOR
+	Arrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
+	Arrow->ArrowColor = FColor::Yellow;
+	Arrow->EditorScale = 1;
+	Arrow->SetupAttachment(this);
+#endif // WITH_EDITOR
 }
-
-
-// Called when the game starts
-void UAttachComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// ...
-	
-}
-
-
-// Called every frame
-void UAttachComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
