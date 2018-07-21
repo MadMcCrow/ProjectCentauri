@@ -39,7 +39,7 @@ void IChildInterface::GetAttachedActorsRecursively(TArray<AActor*>& Out, bool bO
 	}
 }
 
-AActor * IChildInterface::AddChildActor(USceneComponent * Parent, TSubclassOf<class ASpaceActor> ClassToSpawn, const FTransform & InTransform, FName Socket)
+AActor * IChildInterface::AddChildActor(UAttachComponent * Parent, TSubclassOf<class ASpaceActor> ClassToSpawn, const FTransform & InTransform, FName Socket)
 {
 	auto Actor = Cast<AActor>(this);
 	if (!Actor)
@@ -66,18 +66,66 @@ AActor * IChildInterface::AddChildActor(USceneComponent * Parent, TSubclassOf<cl
 	return NewActor;
 }
 
-bool IChildInterface::GetAvaibleAttachPoints(TArray<FTransform>& Out)
+
+bool IChildInterface::GetAvaibleAttachPoints(TArray<class UAttachComponent *> &Out) 
 {
 	auto Actor = Cast<AActor>(this);
 	if (!Actor)
 		return false;
-	Out.Empty();
+	Out.Reset();
 	auto Array = Actor->GetComponentsByClass(UAttachComponent::StaticClass());
 	for (auto it : Array)
 	{
 		auto Attach = Cast<UAttachComponent>(it);
-		if(Attach)
-			Out.Add(Attach->GetRelativeTransform());
+		if (Attach)
+		{
+			if(Attach->GetIsAvailable())
+				Out.Add(Attach);
+		}
+
 	}
+	return (Out.Num()>0);
+}
+
+bool IChildInterface::GetAvaibleAttachPointsTransforms(TArray<FTransform>& Out)
+{
+	TArray<class UAttachComponent *> components;
+	bool success = GetAvaibleAttachPoints(components);
+	Out.Reset();
+	for (auto it : components)
+	{
+		if (it)
+			Out.Add(it->GetWorldTransform());
+	}
+	return success;
+}
+
+
+bool IChildInterface::AddAttachSpaceActor(AActor * & Out, TSubclassOf<ASpaceActor> ClassToSpawn, UAttachComponent  * Target)
+{
+	// Check if we're an actor.
+	auto Actor = Cast<AActor>(this);
+	if (!Actor)
+		return false;
+
+
+	// Find the Attach point
+	UAttachComponent * validtarget = nullptr;
+	if (Target)
+	{
+		validtarget = Target;
+	}
+	else {
+		TArray<UAttachComponent * > AvailableTargets;
+		if(GetAvaibleAttachPoints(AvailableTargets))
+			validtarget = AvailableTargets[0];
+	}
+	if (!validtarget)
+		return false;
+
+	// spawn the actor
+	Out = AddChildActor(validtarget, ClassToSpawn, validtarget->GetComponentToWorld());
+	if (!Out)
+		return false;
 	return true;
 }

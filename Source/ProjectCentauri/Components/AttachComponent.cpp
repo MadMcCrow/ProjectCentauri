@@ -17,3 +17,29 @@ UAttachComponent::UAttachComponent() : Super()
 	Arrow->SetupAttachment(this);
 #endif // WITH_EDITOR
 }
+
+bool UAttachComponent::AttachActor(AActor * NewActor, FName Socket)
+{
+	if (!bIsAvailable)
+		return false;
+	if (NewActor)
+	{
+		FAttachmentTransformRules AttachRules = FAttachmentTransformRules::KeepRelativeTransform;
+		AttachRules.bWeldSimulatedBodies = true;
+		NewActor->AttachToComponent(this, AttachRules, Socket);
+		bIsAvailable = false;
+		AttachedActor = NewActor;
+		return true;
+	}
+	return false;
+}
+
+AActor * UAttachComponent::DetachActor()
+{
+	if (bIsAvailable || !AttachedActor)
+		return nullptr;
+
+	AttachedActor->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	bIsAvailable = true;
+	return AttachedActor;
+}

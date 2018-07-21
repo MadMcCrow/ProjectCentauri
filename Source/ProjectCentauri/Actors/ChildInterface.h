@@ -7,7 +7,7 @@
 #include "ChildInterface.generated.h"
 
 // This class does not need to be modified.
-UINTERFACE(BlueprintType, meta = (CannotImplementInterfaceInBlueprint), MinimalAPI)
+UINTERFACE(MinimalAPI, BlueprintType, meta = (CannotImplementInterfaceInBlueprint))
 class UChildInterface : public UInterface
 {
 	GENERATED_BODY()
@@ -73,21 +73,17 @@ protected:
 	 *	@return AActor : The actor Created, or nullptr if it failed
 	 */
 	UFUNCTION()
-		virtual AActor * AddChildActor(class USceneComponent * Parent, TSubclassOf<class ASpaceActor> ClassToSpawn,const FTransform& InTransform = FTransform::Identity, FName Socket = "None");
+		virtual AActor * AddChildActor(class UAttachComponent * Parent, TSubclassOf<class ASpaceActor> ClassToSpawn,const FTransform& InTransform = FTransform::Identity, FName Socket = "None");
 
 
 	/**
-	*	@brief AddChildActor_BP Function
-	*	This function tries to add and attach an Actor to the Actor implementing this interface
-	*	@param Parent : the Component to Attach to.
-	*	@param ClassToSpawn : The Class of SpaceActor you're trying to spawn
-	*	@return AActor : The actor Created, or nullptr if it failed
-	*	@note : this function is to use AddChildActor in Blueprints. There's no need to override it.
-	*	@see AddChildActor()
+	*	@brief GetAvaibleAttachPoints Function
+	*	This function fills an Array with OutConnectors
+	*	@param Out : Array containing available attach points
+	*	@return bool : true if there's a Valid AttachPoint.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "ChildInterface", meta = (DisplayName = "Add Child Actor"))
-		virtual AActor * AddChildActor_BP(class USceneComponent * Parent, TSubclassOf<class ASpaceActor> ClassName) { return AddChildActor(Parent, ClassName); };
-
+	UFUNCTION()
+		virtual bool GetAvaibleAttachPoints(TArray<class UAttachComponent *> &Out);
 
 	/**
 	*	@brief GetAvaibleAttachPoints Function
@@ -96,7 +92,9 @@ protected:
 	*	@return bool : true if there's a Valid AttachPoint.
 	*/
 	UFUNCTION()
-		virtual bool GetAvaibleAttachPoints(TArray<FTransform> &Out);
+		virtual bool GetAvaibleAttachPointsTransforms(TArray<FTransform> &Out);
+
+
 
 
 	/**
@@ -106,6 +104,28 @@ protected:
 	*	@return bool: true if there's a Valid AttachPoint.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "ChildInterface", meta = (DisplayName = "Get Avaible Attach Points"))
-		virtual bool GetAvaibleAttachPoints_BP(TArray<FTransform> &Out) { return GetAvaibleAttachPoints(Out); }
+		virtual bool GetAvaibleAttachPoints_BP(TArray<FTransform> &Out) { return GetAvaibleAttachPointsTransforms(Out); }
+
+
+	/**
+	*	@brief AddAttachSpaceActor Function
+	*	This function will add and  attach a space actor
+	*	@param AActor: Out the created Actor for future reference.
+	*	@return bool: true if we attached an actor correctly.
+	*/
+	UFUNCTION()
+		virtual bool AddAttachSpaceActor(AActor * &Out, TSubclassOf<class ASpaceActor> ClassToSpawn, class UAttachComponent  * Target = nullptr);
+
+	/**
+	*	@brief AddAttachSpaceActor_BP Function
+	*	This function will add and  attach a space actor
+	*	@param AActor: Out the created Actor for future reference.
+	*	@return bool: true if we attached an actor correctly.
+	*	@see AddAttachSpaceActor
+	*/
+	UFUNCTION(BlueprintCallable, Category = "ChildInterface", meta = (DisplayName = "Add and Attach Space Actor"))
+		virtual bool AddAttachSpaceActor_BP(AActor * &Out, TSubclassOf<class ASpaceActor> ClassToSpawn, class UAttachComponent  * Target = nullptr) {return AddAttachSpaceActor(Out, ClassToSpawn, Target);}
+
+
 
 };
