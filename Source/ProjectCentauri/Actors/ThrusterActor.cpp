@@ -2,6 +2,7 @@
 
 #include "ThrusterActor.h"
 #include "Components/StaticMeshComponent.h"
+#include "ShipPawn.h"
 #include "PhysicsEngine/PhysicsThrusterComponent.h"
 
 
@@ -17,8 +18,8 @@ AThrusterActor::AThrusterActor() : Super()
 
 }
 
-void AThrusterActor::DoThrust()
+void AThrusterActor::DoThrust(float Intensity , UPrimitiveComponent * Root)
 {
-	if(PawnBaseComponent)
-		PawnBaseComponent->AddForceAtLocation(LocalThrustDirection * InpulsePower, FVector() /* Location */, NAME_None);
+	if(Root)
+		Root->AddForceAtLocation(LocalThrustDirection * FMath::Clamp<float>(Intensity * InpulsePower, -InpulsePower, InpulsePower), FVector() /* Location */, NAME_None);
 }

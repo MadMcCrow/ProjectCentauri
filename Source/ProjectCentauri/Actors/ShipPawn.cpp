@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h" // Camera
 #include "Components/ShipMovementComponent.h"
 #include "SpaceActor.h"
+#include "ThrusterActor.h"
 
 #if WITH_EDITOR
 #include "Components/ArrowComponent.h"
@@ -15,7 +16,7 @@
 
 
 //Axis Binding
-const FName AShipPawn::EngineThrustBinding("EngineThrust");
+const FName AShipPawn::EngineThrustBinding("ThrustImpulse");
 const FName AShipPawn::MoveForwardBinding("MoveForward");
 const FName AShipPawn::MoveRightBinding("MoveRight");
 const FName AShipPawn::FireForwardBinding("FireForward");
@@ -24,7 +25,7 @@ const FName AShipPawn::FireRightBinding("FireRight");
 // Sets default values
 AShipPawn::AShipPawn()
 {
- 	// Set this pawn to call Tick() every frame.
+ 	// Set this pawn NOT to call Tick() every frame.
 	PrimaryActorTick.bCanEverTick = false;
 
 	PawnBaseMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Spaceship"));
@@ -59,6 +60,14 @@ void AShipPawn::OnConstruction(const FTransform & Transform)
 	
 }
 
+void AShipPawn::AddForwardInput() //float Val)
+{
+	if ((Controller != NULL))// && (Val != 0.0f))
+	{
+		ApplyMovement(FVector(1, 0.f, 0.f), FRotator());
+	}
+}
+
 // Called when the game starts or when spawned
 void AShipPawn::BeginPlay()
 {
@@ -70,11 +79,6 @@ void AShipPawn::BeginPlay()
 void AShipPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	ApplyMovement();
-#if !UE_BUILD_SHIPPING
-	UE_LOG(LogActor, Display, TEXT("Ship pawn ticking"));
-#endif
-
 }
 
 // Called to bind functionality to input
@@ -82,20 +86,30 @@ void AShipPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	check(PlayerInputComponent);
 	// set up gameplay key bindings
-	PlayerInputComponent->BindAxis(EngineThrustBinding);
-	PlayerInputComponent->BindAxis(MoveForwardBinding);
-	PlayerInputComponent->BindAxis(MoveRightBinding);
-	PlayerInputComponent->BindAxis(FireForwardBinding);
-	PlayerInputComponent->BindAxis(FireRightBinding);
+	PlayerInputComponent->BindAction(EngineThrustBinding, EInputEvent::IE_Pressed, this, &AShipPawn::AddForwardInput);
+	//PlayerInputComponent->BindAxis(MoveForwardBinding);
+	//PlayerInputComponent->BindAxis(MoveRightBinding);
+	//PlayerInputComponent->BindAxis(FireForwardBinding);
+	//PlayerInputComponent->BindAxis(FireRightBinding);
 
 }
 
 
-void AShipPawn::ApplyMovement()
+void AShipPawn::ApplyMovement(FVector Translation, FRotator Rotation)
 {
 	if(bCanMove)
 	{
-		FVector InputVector = FVector(GetInputAxisValue(MoveForwardBinding), GetInputAxisValue(MoveRightBinding), 0 );
+		// first ask those engine if they can participate :
+		for (auto it : ChildActorList)
+		{
+			auto Thruster = Cast<AThrusterActor>(it);
+			if (Thruster)
+			{
+				Thruster->DoThrust(FVector::DotProduct(Translation, Thruster->GetWorldDirection()), PawnBaseMeshComponent);
+			}
+		}
+
+		//FVector InputVector = FVector(GetInputAxisValue(MoveForwardBinding), GetInputAxisValue(MoveRightBinding), 0 );
 		//MovementComponent->ApplyMovement(InputVector);
 	}
 }

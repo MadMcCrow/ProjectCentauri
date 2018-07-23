@@ -18,6 +18,12 @@ public :
 
 	AThrusterActor();
 
+	UFUNCTION()
+		virtual void DoThrust(float Intensity, class UPrimitiveComponent * Root);
+
+	UFUNCTION()
+		virtual FVector GetWorldDirection () { return GetActorTransform().TransformVector(LocalThrustDirection); }
+
 protected:
 
 
@@ -28,12 +34,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Thruster")
 		FVector LocalThrustDirection = FVector::ForwardVector;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Thruster")
-		FVector RelativeThrustDirection = FVector::ForwardVector;
 
-
-	UFUNCTION()
-		virtual void DoThrust();
 
 private:
 	/**
@@ -43,24 +44,5 @@ private:
 	UPROPERTY(Category = Mesh, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UStaticMeshComponent * ThrusterMeshComponent;
 
-protected:
-
-#if 0
-	/**
-	*	@brief Thruster
-	*	the Physical Thruster
-	*/
-	UPROPERTY(Category = Thruster, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		class UPhysicsThrusterComponent * Thruster;
-
-#endif // 0
-
-	/**
-	*	@brief PawnBaseComponent
-	*	The object onto wich we should apply the force of the thruster
-	*/
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Thruster")
-		class UPrimitiveComponent * PawnBaseComponent;
-	
 
 };

@@ -29,6 +29,9 @@ public:
 	static const FName FireForwardBinding;
 	static const FName FireRightBinding;
 
+	virtual void AddForwardInput();//float Val);
+	
+
 private:
 	/**
 	*	@brief ThrusterMeshComponent
@@ -72,7 +75,7 @@ public:
 
 
 private:
-	void ApplyMovement();
+	void ApplyMovement(FVector Translation, FRotator Rotation);
 
 
 	// Team Interface
@@ -97,7 +100,7 @@ protected:
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get All Attached Actors" ))
 	FORCEINLINE TArray<AActor*> GetAllAttachedActors_BP() const { return ChildActorList; }
-
+	
 
 #if 0
 protected:

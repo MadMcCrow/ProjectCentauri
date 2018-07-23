@@ -42,11 +42,11 @@ void IChildInterface::GetAttachedActorsRecursively(TArray<AActor*>& Out, bool bO
 AActor * IChildInterface::AddChildActor(UAttachComponent * Parent, TSubclassOf<class ASpaceActor> ClassToSpawn, const FTransform & InTransform, FName Socket)
 {
 	auto Actor = Cast<AActor>(this);
-	if (!Actor)
+	if (!Actor) // who are you ?
 		return nullptr;
 	auto World = Actor->GetWorld();
-	if(!World)
-		return nullptr;
+	if(!World) // where are you ?
+		return nullptr; 
 	// first prepare the parameters
 	FActorSpawnParameters SpawnParam;
 	SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
@@ -55,14 +55,13 @@ AActor * IChildInterface::AddChildActor(UAttachComponent * Parent, TSubclassOf<c
 	auto NewActor = World->SpawnActor<ASpaceActor>(ClassToSpawn, InTransform,  SpawnParam);
 	if (!NewActor)
 		return nullptr;
-	FAttachmentTransformRules AttachRules = FAttachmentTransformRules::KeepRelativeTransform;
-	AttachRules.bWeldSimulatedBodies = true;
-	NewActor->AttachToComponent(Parent, AttachRules, Socket);
-
+	if(!Parent->AttachActor(NewActor)) // something went wrong
+	NewActor->Destroy(); // Let's not make this leave this function alive
+	// Obey your master
 	NewActor->SetOwner(Actor);
-
+	// Since we're in the clear, let's do some update
 	UpdateChildActors();
-
+	// All good chief
 	return NewActor;
 }
 
@@ -124,7 +123,7 @@ bool IChildInterface::AddAttachSpaceActor(AActor * & Out, TSubclassOf<ASpaceActo
 		return false;
 
 	// spawn the actor
-	Out = AddChildActor(validtarget, ClassToSpawn, validtarget->GetComponentToWorld());
+	Out = AddChildActor(validtarget, ClassToSpawn);// validtarget->GetComponentTransform()); -> no need to give the correct transform (it would apply it twice)
 	if (!Out)
 		return false;
 	return true;

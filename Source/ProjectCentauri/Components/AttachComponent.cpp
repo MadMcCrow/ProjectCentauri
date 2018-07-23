@@ -21,7 +21,7 @@ UAttachComponent::UAttachComponent() : Super()
 bool UAttachComponent::AttachActor(AActor * NewActor, FName Socket)
 {
 	if (!bIsAvailable)
-		return false;
+		return false; // aka : fuck you
 	if (NewActor)
 	{
 		FAttachmentTransformRules AttachRules = FAttachmentTransformRules::KeepRelativeTransform;
