@@ -10,6 +10,9 @@
 UAttachComponent::UAttachComponent() : Super()
 {
 	Owner = GetOwner();
+	
+
+
 #if WITH_EDITOR
 	Arrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
 	Arrow->ArrowColor = FColor::Yellow;

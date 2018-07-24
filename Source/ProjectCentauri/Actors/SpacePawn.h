@@ -6,18 +6,18 @@
 #include "GameFramework/Pawn.h"
 #include "Gameplay/TeamInterface.h"
 #include "ChildInterface.h"
-#include "ShipPawn.generated.h"
+#include "SpacePawn.generated.h"
 
 /**
 *	This is the main part of a spaceship
 */
 UCLASS()
-class PROJECTCENTAURI_API AShipPawn : public APawn, public ITeamInterface, public IChildInterface
+class PROJECTCENTAURI_API ASpacePawn : public APawn, public ITeamInterface, public IChildInterface
 {
 	GENERATED_BODY()
 public:
 	// Sets default values for this pawn's properties
-	AShipPawn();
+	ASpacePawn();
 
 	// Do the spawn initialisation here
 	virtual void OnConstruction(const FTransform & Transform) override;
@@ -28,6 +28,11 @@ public:
 	static const FName MoveRightBinding;
 	static const FName FireForwardBinding;
 	static const FName FireRightBinding;
+
+	// Controller bindings
+	static const FName RotateYawBinding;
+	static const FName RotatePitchBinding;
+	static const FName RotateRollBinding;
 
 	virtual void AddForwardInput();//float Val);
 	
@@ -40,16 +45,17 @@ private:
 	UPROPERTY(Category = Mesh, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UStaticMeshComponent * PawnBaseMeshComponent;
 
+	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* CameraComponent;
+
+	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		class USpringArmComponent* CameraBoom;
+
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Space ship | Class")
-	class UChildActorComponent* ShipComponent;
 
-	class UCameraComponent* CameraComponent;
-	class USpringArmComponent* CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UShipMovementComponent* MovementComponent;
@@ -65,8 +71,10 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	/** Returns Shipsubobject **/
-	FORCEINLINE class UActorComponent* GetShipComponent() const { return ShipComponent; }
+	UFUNCTION()
+		virtual void SetFreeCamera(bool SetFree);
+
+
 	/** Returns CameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetCameraComponent() const { return CameraComponent; }
 	/** Returns CameraBoom subobject **/

@@ -1,11 +1,12 @@
 // Copyright 2018 Noe PERARD-GAYOT
 
-#include "ShipPawn.h"
+#include "SpacePawn.h"
 #include "Components/InputComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h" // Spring Arm
 #include "Camera/CameraComponent.h" // Camera
 #include "Components/ShipMovementComponent.h"
+#include "Gameplay/SpacePlayerController.h"
 #include "SpaceActor.h"
 #include "ThrusterActor.h"
 
@@ -16,17 +17,21 @@
 
 
 //Axis Binding
-const FName AShipPawn::EngineThrustBinding("ThrustImpulse");
-const FName AShipPawn::MoveForwardBinding("MoveForward");
-const FName AShipPawn::MoveRightBinding("MoveRight");
-const FName AShipPawn::FireForwardBinding("FireForward");
-const FName AShipPawn::FireRightBinding("FireRight");
+const FName ASpacePawn::EngineThrustBinding("ThrustImpulse");
+const FName ASpacePawn::MoveForwardBinding("MoveForward");
+const FName ASpacePawn::MoveRightBinding("MoveRight");
+const FName ASpacePawn::FireForwardBinding("FireForward");
+const FName ASpacePawn::FireRightBinding("FireRight");
+
+const FName  ASpacePawn::RotateYawBinding("Yaw Axis");
+const FName  ASpacePawn::RotatePitchBinding("Pitch Axis");;
+const FName  ASpacePawn::RotateRollBinding("Roll Axis");;
 
 // Sets default values
-AShipPawn::AShipPawn()
+ASpacePawn::ASpacePawn()
 {
  	// Set this pawn NOT to call Tick() every frame.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	PawnBaseMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Spaceship"));
 	RootComponent = PawnBaseMeshComponent;
@@ -34,7 +39,7 @@ AShipPawn::AShipPawn()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->bAbsoluteRotation = true; // Don't want arm to rotate when ship does
-	CameraBoom->TargetArmLength = 3000.f;
+	CameraBoom->TargetArmLength = 1300.f;
 	CameraBoom->RelativeRotation = FRotator(-70.f, 0.f, 0.f);
 	CameraBoom->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
 
@@ -55,12 +60,12 @@ AShipPawn::AShipPawn()
 
 }
 
-void AShipPawn::OnConstruction(const FTransform & Transform)
+void ASpacePawn::OnConstruction(const FTransform & Transform)
 {
 	
 }
 
-void AShipPawn::AddForwardInput() //float Val)
+void ASpacePawn::AddForwardInput() //float Val)
 {
 	if ((Controller != NULL))// && (Val != 0.0f))
 	{
@@ -69,24 +74,36 @@ void AShipPawn::AddForwardInput() //float Val)
 }
 
 // Called when the game starts or when spawned
-void AShipPawn::BeginPlay()
+void ASpacePawn::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
 
 // Called every frame
-void AShipPawn::Tick(float DeltaTime)
+void ASpacePawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	auto Controller = Cast<ASpacePlayerController>(GetController());
+	if (Controller)
+		SetFreeCamera(Controller->IsSelectionMode());
+
 }
 
 // Called to bind functionality to input
-void AShipPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ASpacePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	check(PlayerInputComponent);
+	
+	//Controller Bindings
+	//PlayerInputComponent->BindAxis(RotateYawBinding, this, &APawn::AddControllerYawInput);
+	//PlayerInputComponent->BindAxis(RotatePitchBinding, this, &APawn::AddControllerPitchInput);
+	//PlayerInputComponent->BindAxis(RotateRollBinding, this, &APawn::AddControllerRollInput);
+
 	// set up gameplay key bindings
-	PlayerInputComponent->BindAction(EngineThrustBinding, EInputEvent::IE_Pressed, this, &AShipPawn::AddForwardInput);
+	PlayerInputComponent->BindAction(EngineThrustBinding, EInputEvent::IE_Pressed, this, &ASpacePawn::AddForwardInput);
+
+
 	//PlayerInputComponent->BindAxis(MoveForwardBinding);
 	//PlayerInputComponent->BindAxis(MoveRightBinding);
 	//PlayerInputComponent->BindAxis(FireForwardBinding);
@@ -94,8 +111,23 @@ void AShipPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+void ASpacePawn::SetFreeCamera(bool SetFree)
+{
+	if(SetFree)
+	{
+		CameraBoom->bUsePawnControlRotation = true;
+	}
+	else
+	{
+		CameraBoom->ResetRelativeTransform();
+		CameraBoom->TargetArmLength = 1300.f;
+		CameraBoom->RelativeRotation = FRotator(-70.f, 0.f, 0.f);
+		CameraBoom->bUsePawnControlRotation = false;
+	}
+}
 
-void AShipPawn::ApplyMovement(FVector Translation, FRotator Rotation)
+
+void ASpacePawn::ApplyMovement(FVector Translation, FRotator Rotation)
 {
 	if(bCanMove)
 	{

@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/SceneComponent.h"
+#include "Components/SphereComponent.h"
 #include "AttachComponent.generated.h"
 
 
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PROJECTCENTAURI_API UAttachComponent : public USceneComponent
+UCLASS( ClassGroup=(Centauri), meta=(BlueprintSpawnableComponent) )
+class PROJECTCENTAURI_API UAttachComponent : public USphereComponent
 {
 	GENERATED_BODY()
 
@@ -98,5 +98,7 @@ private:
 	*/
 	UPROPERTY()
 		class AActor * AttachedActor;
+
+
 
 };
