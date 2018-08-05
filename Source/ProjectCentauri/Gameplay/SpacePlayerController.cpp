@@ -8,8 +8,8 @@ const FName ASpacePlayerController::SelectionToggleBinding("ToggleSelection");
 const FName ASpacePlayerController::SelectionClickBinding("ClickSelection");
 
 
-const FName  ASpacePlayerController::RotateYawBinding("Yaw");
-const FName  ASpacePlayerController::RotatePitchBinding("Pitch");;
+const FName  ASpacePlayerController::RotateYawBinding("Camera Yaw");
+const FName  ASpacePlayerController::RotatePitchBinding("Camera Pitch");;
 const FName  ASpacePlayerController::RotateRollBinding("Roll");;
 
 ASpacePlayerController::ASpacePlayerController() : Super()
@@ -31,12 +31,12 @@ void ASpacePlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	InitializeBindings();
-	InputComponent->BindAction(SelectionToggleBinding, IE_Pressed, this, &ASpacePlayerController::ToggleSelectionMode);
-	InputComponent->BindAction(SelectionClickBinding, IE_Pressed, this, &ASpacePlayerController::SelectComponent);
+	//InputComponent->BindAction(SelectionToggleBinding, IE_Pressed, this, &ASpacePlayerController::ToggleSelectionMode);
+	//InputComponent->BindAction(SelectionClickBinding, IE_Pressed, this, &ASpacePlayerController::SelectComponent);
 
 	InputComponent->BindAxis(RotateYawBinding, this, &APlayerController::AddYawInput);
 	InputComponent->BindAxis(RotatePitchBinding, this, &APlayerController::AddPitchInput);
-	InputComponent->BindAxis(RotateRollBinding, this, &APlayerController::AddRollInput);
+	//InputComponent->BindAxis(RotateRollBinding, this, &APlayerController::AddRollInput);
 
 }
 
@@ -48,52 +48,6 @@ void ASpacePlayerController::Tick(float DeltaTime)
 		MouseOverComponent();
 	}
 	// Do nothing yet
-}
-
-USceneComponent * ASpacePlayerController::GetVisibleComponentUnderCursor()
-{
-	ETraceTypeQuery TraceChannel = ETraceTypeQuery::TraceTypeQuery1;
-	FHitResult HitResult;
-	GetHitResultUnderCursorByChannel(TraceChannel, true, HitResult);
-	if (HitResult.Component.IsValid())
-		return HitResult.Component.Get();
-	return nullptr;
-}
-
-
-USceneComponent * ASpacePlayerController::GetComponentByObjectUnderCursor()
-{
-
-	FHitResult HitResult;
-	TArray<TEnumAsByte<EObjectTypeQuery> > ObjectTypes;
-	ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery_MAX);
-	GetHitResultUnderCursorForObjects(ObjectTypes, true, HitResult);
-	if (HitResult.Component.IsValid())
-		return HitResult.Component.Get();
-	return nullptr;
-}
-
-void ASpacePlayerController::SelectComponent()
-{
-	auto target = GetComponentByObjectUnderCursor();
-	if (target)
-	{
-		SelectedComponent = target;
-		SelectedActor = target->GetOwner();
-		SelectComponent_BP(SelectedComponent);
-	}
-
-}
-
-void ASpacePlayerController::MouseOverComponent()
-{
-	auto target = GetComponentByObjectUnderCursor();
-	if (target)
-	{
-		HoveredComponent = target;
-		HoveredActor = target->GetOwner();
-		MouseOverComponent_BP(HoveredComponent);
-	}
 }
 
 void ASpacePlayerController::SetSelectionMode(bool IsSelectionMode)
@@ -112,4 +66,44 @@ void ASpacePlayerController::ToggleSelectionMode()
 void ASpacePlayerController::DisplaySelection()
 {
 	DisplaySelection_BP(); // BlueprintImplementableEvent
+}
+
+void ASpacePlayerController::ChooseMode(EControllerStateEnum NewMode)
+{
+	SpaceState = NewMode;
+	switch (NewMode)
+	{
+	case EControllerStateEnum::CSE_Build:
+		SetBuilding();
+		break;
+	case EControllerStateEnum::CSE_Pilot:
+		SetPilot();
+		break;
+	case EControllerStateEnum::CSE_Aim:
+		SetAim();
+		break;
+	default:
+		// Do nothing
+		break;
+	}
+
+}
+
+void ASpacePlayerController::SetBuilding()
+{
+	SetSelectionMode(true);
+	// Call the Blueprint implementation.
+	SetBuilding_BP();
+}
+
+void ASpacePlayerController::SetPilot()
+{
+	// Call the blueprint implementation
+	SetPilot_BP();
+}
+
+void ASpacePlayerController::SetAim()
+{
+	// Call the blueprint implementation
+	SetAim_BP();
 }

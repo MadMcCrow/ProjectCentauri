@@ -31,7 +31,7 @@ const FName  ASpacePawn::RotateRollBinding("Roll Axis");;
 ASpacePawn::ASpacePawn()
 {
  	// Set this pawn NOT to call Tick() every frame.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	PawnBaseMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Spaceship"));
 	RootComponent = PawnBaseMeshComponent;
@@ -62,14 +62,14 @@ ASpacePawn::ASpacePawn()
 
 void ASpacePawn::OnConstruction(const FTransform & Transform)
 {
-	
+	SetFreeCamera(true);
 }
 
-void ASpacePawn::AddForwardInput() //float Val)
+void ASpacePawn::AddForwardInput(float Val)
 {
-	if ((Controller != NULL))// && (Val != 0.0f))
+	if ((Controller != NULL) && (Val != 0.0f))
 	{
-		ApplyMovement(FVector(1, 0.f, 0.f), FRotator());
+		AddThrust(FVector(-1.f, 0.f, 0.f), Val);
 	}
 }
 
@@ -84,10 +84,6 @@ void ASpacePawn::BeginPlay()
 void ASpacePawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	auto Controller = Cast<ASpacePlayerController>(GetController());
-	if (Controller)
-		SetFreeCamera(Controller->IsSelectionMode());
-
 }
 
 // Called to bind functionality to input
@@ -96,15 +92,15 @@ void ASpacePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	check(PlayerInputComponent);
 	
 	//Controller Bindings
-	//PlayerInputComponent->BindAxis(RotateYawBinding, this, &APawn::AddControllerYawInput);
-	//PlayerInputComponent->BindAxis(RotatePitchBinding, this, &APawn::AddControllerPitchInput);
-	//PlayerInputComponent->BindAxis(RotateRollBinding, this, &APawn::AddControllerRollInput);
+	PlayerInputComponent->BindAxis(RotateYawBinding, this, &ASpacePawn::AddYaw);
+	PlayerInputComponent->BindAxis(RotatePitchBinding, this, &ASpacePawn::AddPitch);
+	PlayerInputComponent->BindAxis(RotateRollBinding, this, &ASpacePawn::AddRoll);
 
 	// set up gameplay key bindings
-	PlayerInputComponent->BindAction(EngineThrustBinding, EInputEvent::IE_Pressed, this, &ASpacePawn::AddForwardInput);
+	//PlayerInputComponent->BindAction(EngineThrustBinding, EInputEvent::IE_Pressed, this, &ASpacePawn::AddForwardInput);
 
 
-	//PlayerInputComponent->BindAxis(MoveForwardBinding);
+	PlayerInputComponent->BindAxis(MoveForwardBinding, this, &ASpacePawn::AddForwardInput);
 	//PlayerInputComponent->BindAxis(MoveRightBinding);
 	//PlayerInputComponent->BindAxis(FireForwardBinding);
 	//PlayerInputComponent->BindAxis(FireRightBinding);
@@ -127,7 +123,7 @@ void ASpacePawn::SetFreeCamera(bool SetFree)
 }
 
 
-void ASpacePawn::ApplyMovement(FVector Translation, FRotator Rotation)
+void ASpacePawn::AddThrust(FVector Direction, float Intensity )
 {
 	if(bCanMove)
 	{
@@ -137,12 +133,36 @@ void ASpacePawn::ApplyMovement(FVector Translation, FRotator Rotation)
 			auto Thruster = Cast<AThrusterActor>(it);
 			if (Thruster)
 			{
-				Thruster->DoThrust(FVector::DotProduct(Translation, Thruster->GetWorldDirection()), PawnBaseMeshComponent);
+				Thruster->DoThrust(FVector::DotProduct(Direction, Thruster->GetWorldDirection()) * Intensity , PawnBaseMeshComponent);
 			}
 		}
 
 		//FVector InputVector = FVector(GetInputAxisValue(MoveForwardBinding), GetInputAxisValue(MoveRightBinding), 0 );
 		//MovementComponent->ApplyMovement(InputVector);
+	}
+}
+
+void ASpacePawn::AddYaw(float Value)
+{
+	if (bCanMove)
+	{
+
+	}
+}
+
+void ASpacePawn::AddPitch(float Value)
+{
+	if (bCanMove)
+	{
+
+	}
+}
+
+void ASpacePawn::AddRoll(float Value)
+{
+	if (bCanMove)
+	{
+
 	}
 }
 

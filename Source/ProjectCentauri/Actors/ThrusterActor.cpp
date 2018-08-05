@@ -20,6 +20,9 @@ AThrusterActor::AThrusterActor() : Super()
 
 void AThrusterActor::DoThrust(float Intensity , UPrimitiveComponent * Root)
 {
-	if(Root)
-		Root->AddForceAtLocation(LocalThrustDirection * FMath::Clamp<float>(Intensity * InpulsePower, -InpulsePower, InpulsePower), FVector() /* Location */, NAME_None);
+	
+	if (Root)
+		Root->AddForce(LocalThrustDirection * FMath::Clamp<float>(Intensity * InpulsePower, -InpulsePower, InpulsePower), NAME_None, false);
+	DoThrust_BP(Intensity, Root);
+
 }

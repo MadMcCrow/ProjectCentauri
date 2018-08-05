@@ -34,7 +34,7 @@ public:
 	static const FName RotatePitchBinding;
 	static const FName RotateRollBinding;
 
-	virtual void AddForwardInput();//float Val);
+	virtual void AddForwardInput( float Val);
 	
 
 private:
@@ -82,8 +82,31 @@ public:
 
 
 
-private:
-	void ApplyMovement(FVector Translation, FRotator Rotation);
+protected:
+
+	/**
+	*	@brief AddForwardThrust function
+	*	Calculate the correct amount of thrust to move  in Direction for each thruster. should be used at tick or something 
+	*/
+	virtual void AddThrust(FVector Direction,  float Intensity = 1);
+
+	/**
+	 *	@brief AddYaw function
+	 *	Add Yaw if possible
+	 */
+	virtual void AddYaw(float Value);
+
+	/**
+	*	@brief AddPitch function
+	*	Add pitch to the pawn if possible
+	*/
+	virtual void AddPitch(float Value);
+
+	/**
+	*	@brief AddRoll function
+	*	Add roll to the pawn if possible
+	*/
+	virtual void AddRoll(float Value);
 
 
 	// Team Interface

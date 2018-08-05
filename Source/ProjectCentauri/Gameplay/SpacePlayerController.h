@@ -3,15 +3,27 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/PlayerController.h"
+#include "CentauriController.h"
 #include "SpacePlayerController.generated.h"
+
+/**
+*	@brief EControllerStateEnum Enum
+*	Describe the different states the player controller can be
+*/
+UENUM(Blueprintable)
+enum class EControllerStateEnum : uint8
+{
+	CSE_Build	 	UMETA(DisplayName = "Building"),
+	CSE_Pilot	 	UMETA(DisplayName = "Flying"),
+	CSE_Aim			UMETA(DisplayName = "Aiming")
+};
 
 /**
  *	@brief ASpacePlayerController class
  *	Extend PlayerController by giving Selection capabilities
  */
 UCLASS()
-class PROJECTCENTAURI_API ASpacePlayerController : public APlayerController
+class PROJECTCENTAURI_API ASpacePlayerController : public ACentauriController
 {
 	GENERATED_BODY()
 public:
@@ -53,69 +65,6 @@ public:
 	*	@see AActor
 	*/
 	virtual void Tick(float DeltaTime) override;
-
-	/**
-	 *	@brief GetVisibleComponentUnderCursor function
-	 *	Fast an easy way of finding components under the mouse
-	 *	@return USceneComponent * : A component that's under the cursor, nullptr if you're pointing at the void
-	 */
-	UFUNCTION()
-		USceneComponent * GetVisibleComponentUnderCursor();
-
-	/**
-	 *	@brief GetVisibleComponentUnderCursor_BP function
-	 *	Fast an easy way of finding components under the mouse, for blueprints
-	 *	@return USceneComponent * : A component that's under the cursor, nullptr if you're pointing at the void
-	 *	@note : For Blueprints.
-	 */
-	UFUNCTION(BlueprintPure, Category = "Centauri", meta = (DisplayName = "Get Visible Component Under Cursor") )
-		FORCEINLINE USceneComponent * GetVisibleComponentUnderCursor_BP() { return GetVisibleComponentUnderCursor(); }
-
-	/**
-	 *	@brief GetComponentByObjectUnderCursor function
-	 *	Fast an easy way of finding components under the mouse
-	 *	@return USceneComponent * : A component that's under the cursor, nullptr if you're pointing at the void
-	 */
-	UFUNCTION()
-		USceneComponent * GetComponentByObjectUnderCursor();
-
-	/**
-	 *	@brief GetComponentByObjectUnderCursor_BP function
-	 *	Fast an easy way of finding components under the mouse, for blueprints
-	 *	@return USceneComponent * : A component that's under the cursor, nullptr if you're pointing at the void
-	 *	@note : For Blueprints.
-	 */
-	UFUNCTION(BlueprintPure, Category = "Centauri", meta = (DisplayName = "Get Component by Object Under Cursor"))
-		FORCEINLINE USceneComponent * GetComponentByObjectUnderCursor_BP() { return GetComponentByObjectUnderCursor(); }
-
-
-	/**
-	 *	@brief SelectComponent function
-	 *	Select a cursor. is called by a binding (should be the left click)
-	 */
-	UFUNCTION()
-		void SelectComponent();
-
-	/**
-	 *	@brief SelectComponent_BP function
-	 *	@note : For Blueprints to implement further behaviour.
-	 */
-	UFUNCTION(BlueprintImplementableEvent, Category = "Centauri", meta = (DisplayName = "Select Component"))
-		void SelectComponent_BP(class USceneComponent * Selected);
-
-	/**
-	*	@brief MouseOverComponent function
-	*	hover a component. is called in tick
-	*/
-	UFUNCTION()
-		void MouseOverComponent();
-
-	/**
-	*	@brief SelectComponent_BP function
-	*	@note : For Blueprints to implement further behaviour.
-	*/
-	UFUNCTION(BlueprintImplementableEvent, Category = "Centauri", meta = (DisplayName = "Mouse Over Component"))
-		void MouseOverComponent_BP( class USceneComponent * Hovered);
 
 	/**
 	*	@brief SetSelectionMode function
@@ -210,17 +159,91 @@ private:
 	UPROPERTY()
 		bool bSelectionEnabled;  // boolean flag, true if in selection mode
 
-	UPROPERTY()
-		class USceneComponent * SelectedComponent; // Selected component by the selection method
+
+private:
 
 	UPROPERTY()
-		class AActor * SelectedActor;// Selected Actor by the selection method
+		EControllerStateEnum SpaceState;
 
-	UPROPERTY()
-		class USceneComponent * HoveredComponent; // Selected component by the MouseOver method
+public:
 
-	UPROPERTY()
-		class AActor * HoveredActor;// Selected Actor by the MouseOver method
+	/**
+	*	@brief ChooseMode function
+	*	Allow switching modes between building, flying and fighting
+	*/
+	UFUNCTION()
+		virtual void ChooseMode(const EControllerStateEnum NewMode);
+
+
+	/**
+	*	@brief DisplaySelection_BP function
+	*	Allow switching modes between building, flying and fighting
+	*	@note for blueprint only, calls the C++ method
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Centauri|Mode", meta = (DisplayName = "ChooseMode"))
+	void ChooseMode_BP(const EControllerStateEnum NewMode) { ChooseMode(NewMode); }
+
+	/**
+	 *	@brief GetMode function
+	 *	@return SpaceState
+	 */
+	UFUNCTION()
+	FORCEINLINE EControllerStateEnum GetMode() const { return SpaceState; }
+
+	/**
+	 *	@brief GetMode_BP function
+	 *	@return SpaceState
+ 	 *	@note for blueprint only.
+	 */
+	UFUNCTION(BlueprintPure, Category = "Centauri|Mode", meta = (DisplayName = "Get Mode"))
+	FORCEINLINE EControllerStateEnum GetMode_BP() const { return SpaceState; }
+
+protected:
+
+	/**
+	*	@brief SetBuilding function
+	*	Set in building Mode
+	*/
+	UFUNCTION()
+		virtual void SetBuilding();
+
+	/**
+	*	@brief DisplaySelection_BP function
+	*	Setup the building Mode
+	*	@note : Not implemented in C++
+	*/
+	UFUNCTION(BlueprintImplementableEvent, Category = "Centauri|Mode", meta = (DisplayName = "Set in building Mode"))
+		void SetBuilding_BP();
+
+	/**
+	*	@brief SetBuilding function
+	*	Set in building Mode
+	*/
+	UFUNCTION()
+		virtual void SetPilot();
+
+	/**
+	*	@brief DisplaySelection_BP function
+	*	Setup the Flying Mode
+	*	@note : Not implemented in C++
+	*/
+	UFUNCTION(BlueprintImplementableEvent, Category = "Centauri|Mode", meta = (DisplayName = "Set in flying Mode"))
+		void SetPilot_BP();
+
+	/**
+	*	@brief SetBuilding function
+	*	Set in Aiming Mode
+	*/
+	UFUNCTION()
+		virtual void SetAim();
+
+	/**
+	*	@brief DisplaySelection_BP function
+	*	Setup the Aiming Mode
+	*	@note : Not implemented in C++
+	*/
+	UFUNCTION(BlueprintImplementableEvent, Category = "Centauri|Mode", meta = (DisplayName = "Set in aiming Mode"))
+		void SetAim_BP();
 
 
 

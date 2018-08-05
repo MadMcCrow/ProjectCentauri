@@ -21,6 +21,10 @@ public :
 	UFUNCTION()
 		virtual void DoThrust(float Intensity, class UPrimitiveComponent * Root);
 
+	UFUNCTION(BlueprintImplementableEvent, Category ="Thruster", meta = (DisplayName = "Do Thrust"))
+		void DoThrust_BP(float Intensity, class UPrimitiveComponent * Root);
+
+
 	UFUNCTION()
 		virtual FVector GetWorldDirection () { return GetActorTransform().TransformVector(LocalThrustDirection); }
 

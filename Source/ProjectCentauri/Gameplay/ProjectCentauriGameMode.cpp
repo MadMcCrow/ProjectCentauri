@@ -3,10 +3,12 @@
 #include "ProjectCentauriGameMode.h"
 #include "Actors/SpacePawn.h"
 #include "PlayerStatistics.h"
+#include "SpacePlayerController.h"
 
 AProjectCentauriGameMode::AProjectCentauriGameMode()
 {
-	DefaultPawnClass = ASpacePawn::StaticClass();
-	PlayerStateClass = APlayerStatistics::StaticClass();
+	DefaultPawnClass	  = ASpacePawn::StaticClass();
+	PlayerControllerClass = ASpacePlayerController::StaticClass();
+	PlayerStateClass	  = APlayerStatistics::StaticClass();
 }
 
