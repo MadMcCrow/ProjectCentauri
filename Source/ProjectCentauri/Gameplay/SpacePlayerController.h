@@ -66,6 +66,56 @@ public:
 	*/
 	virtual void Tick(float DeltaTime) override;
 
+
+public:
+	/**
+	*	@brief SelectionActorClass property
+	*	class defining An actor allowing to show what's selected
+	*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Selection")
+		TSubclassOf<class ASelectionActor> SelectionActorClass;
+
+protected:
+	/**
+	*	@brief SelectionActor property
+	*	An actor allowing to show what's selected
+	*/
+	UPROPERTY()
+		class ASelectionActor * SelectionActor;
+
+	/**
+	*	@brief SelectionActor property
+	*	An actor allowing to show what's hovered
+	*/
+	UPROPERTY()
+		class ASelectionActor * HoverActor;
+
+
+	/**
+	*	@brief SpawnSelectionActor Function
+	*	@param SpawnTransform : the world transform to spawn it.
+	*	@retrun a pointer to the created Actor or nullptr if it failed
+	*	@note Does not assign anything you'll have to store the returned pointer.
+	*/
+	UFUNCTION()
+		class ASelectionActor *  SpawnSelectionActor(const FTransform SpawnTransform);
+
+
+
+public:
+	/**
+	*	@brief HoverOnMode function
+	*	Allow for handling Hovering depending on Mode
+	*	@param bool Mode : the mode to use
+	*	@note : you should feed it the current mode
+	*/
+	UFUNCTION()
+		void HoverOnMode(EControllerStateEnum Mode);
+
+
+
+public:
+
 	/**
 	*	@brief SetSelectionMode function
 	*	Allow for Changing mode of cursor

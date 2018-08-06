@@ -85,7 +85,7 @@ public:
 	*	hover a component. is called in tick
 	*/
 	UFUNCTION()
-		void MouseOverComponent();
+		bool MouseOverComponent();
 
 	/**
 	*	@brief SelectComponent_BP function

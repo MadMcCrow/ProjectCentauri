@@ -2,6 +2,11 @@
 
 #include "SpacePlayerController.h"
 #include "GameFramework/PlayerInput.h"
+#include "Engine/World.h"
+#include "Components/SceneComponent.h"
+
+#include "Components/AttachComponent.h"
+#include "UserInterface/SelectionActor.h"
 
 //Bindings for the selection
 const FName ASpacePlayerController::SelectionToggleBinding("ToggleSelection");
@@ -45,10 +50,53 @@ void ASpacePlayerController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (bSelectionEnabled)
 	{
-		MouseOverComponent();
+		if (MouseOverComponent())
+		{
+			HoverOnMode(SpaceState);
+		}
 	}
 	// Do nothing yet
 }
+
+void ASpacePlayerController::HoverOnMode(EControllerStateEnum Mode)
+{
+	switch (Mode)
+	{
+	case EControllerStateEnum::CSE_Build:
+		if (HoveredComponent->IsA<UAttachComponent>())
+		{
+			if(HoverActor)
+				HoverActor->Destroy();
+			HoverActor = SpawnSelectionActor(HoveredComponent->GetComponentTransform());
+		}
+		break;
+	case EControllerStateEnum::CSE_Pilot:
+		break;
+	case EControllerStateEnum::CSE_Aim:
+		break;
+	default:
+		break;
+	}
+
+}
+
+ASelectionActor * ASpacePlayerController::SpawnSelectionActor(const FTransform SpawnTransform)
+{
+	// first prepare the parameters
+	FActorSpawnParameters SpawnParam;
+	SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	SpawnParam.Owner = this;
+	SpawnParam.bAllowDuringConstructionScript = true; // maybe not necessary but better be safe than sorry
+	// Spawn
+	auto NewSelectionActor = GetWorld()->SpawnActor<ASelectionActor>(SelectionActorClass, SpawnTransform, SpawnParam);
+	if (!NewSelectionActor)
+		return nullptr;
+	// Obey your master
+	NewSelectionActor->SetOwner(this);
+	return NewSelectionActor;
+}
+
+
 
 void ASpacePlayerController::SetSelectionMode(bool IsSelectionMode)
 {

@@ -46,13 +46,18 @@ void ACentauriController::SelectComponent()
 
 }
 
-void ACentauriController::MouseOverComponent()
+bool ACentauriController::MouseOverComponent()
 {
 	auto target = GetComponentByObjectUnderCursor();
 	if (target)
 	{
-		HoveredComponent = target;
-		HoveredActor = target->GetOwner();
-		MouseOverComponent_BP(HoveredComponent);
+		if (target != HoveredComponent)
+		{
+			HoveredComponent = target;
+			HoveredActor = target->GetOwner();
+			MouseOverComponent_BP(HoveredComponent);
+			return true;
+		}
 	}
+	return false;
 }
