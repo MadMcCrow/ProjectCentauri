@@ -25,5 +25,16 @@ void UCentauriWidget::BindDelegates()
 
 }
 
+void UCentauriWidget::SetActive(bool NewActive)
+{
+	bIsActive = NewActive;
+	OnActive(bIsActive);
+}
+
+void UCentauriWidget::OnActive(bool IsActive)
+{
+	OnActive_BP(IsActive);
+}
+
 
 

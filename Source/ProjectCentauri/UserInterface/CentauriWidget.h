@@ -53,7 +53,52 @@ protected:
 	*	@brief GetCentauriController_BP function
 	*	@return The Centauri Controller who controls it
 	*/
-	UFUNCTION(BlueprintPure, Category = "Centauri", meta = (DisplayName ="Get Controller"))
+	UFUNCTION(BlueprintPure, Category = "Centauri|UI", meta = (DisplayName ="Get Controller"))
 		FORCEINLINE  ACentauriController *  GetCentauriController_BP() {	return GetCentauriController();	}
+
+private:
+
+	/**
+	*	@brief bIsActive property
+	*	Boolean Flag to do something if this should not be active
+	*/
+	UPROPERTY()
+	bool bIsActive;
+
+public:
+
+	/**
+	*	@brief SetActive function
+	*	Setter for the Active Flag.
+	*/
+	UFUNCTION()
+		void SetActive(bool NewActive);
+
+	/**
+	*	@brief SetActive_BP function
+	*	Setter for the Active Flag.
+	*	@note For BP only
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Centauri|UI", meta = (DisplayName = "Set Active"))
+		void SetActive_BP( const bool NewActive) { SetActive(NewActive); }
+
+protected:
+
+	/**
+	*	@brief SetActive_BP function
+	*	Function to implement behaviour of Active state
+	*	@param isActive : Just pass the bIsActive value.
+	*/
+	UFUNCTION()
+		virtual void OnActive(const bool IsActive);
+
+	/**
+	*	@brief SetActive_BP function
+	*	Function to implement behaviour of Active state
+	*	@param isActive : Just pass the bIsActive value.
+	*	@note Implemented in BP, Not in C++
+	*/
+	UFUNCTION(BlueprintImplementableEvent, Category = "Centauri|UI", meta = (DisplayName = "On Active Event"))
+		void OnActive_BP(const bool IsActive);
 
 };

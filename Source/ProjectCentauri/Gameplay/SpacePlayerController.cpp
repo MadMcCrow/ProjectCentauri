@@ -8,9 +8,9 @@
 #include "Components/AttachComponent.h"
 #include "UserInterface/SelectionActor.h"
 
-//Bindings for the selection
-const FName ASpacePlayerController::SelectionToggleBinding("ToggleSelection");
-const FName ASpacePlayerController::SelectionClickBinding("ClickSelection");
+#include "Components/WidgetComponent.h"
+
+
 
 
 const FName  ASpacePlayerController::RotateYawBinding("Camera Yaw");
@@ -21,29 +21,18 @@ ASpacePlayerController::ASpacePlayerController() : Super()
 {
 	bSelectionEnabled = false;
 	bShowMouseCursor = false;
-
+	bAttachToPawn = true;
 }
 
 void ASpacePlayerController::InitializeBindings()
 {
-	// is this necessary ? Will see
-	PlayerInput->AddEngineDefinedActionMapping(FInputActionKeyMapping(SelectionToggleBinding, EKeys::Tab));
-	PlayerInput->AddEngineDefinedActionMapping(FInputActionKeyMapping(SelectionClickBinding, EKeys::LeftMouseButton));
-}
-
-void ASpacePlayerController::SetupInputComponent()
-{
-	Super::SetupInputComponent();
-
-	InitializeBindings();
-	//InputComponent->BindAction(SelectionToggleBinding, IE_Pressed, this, &ASpacePlayerController::ToggleSelectionMode);
-	//InputComponent->BindAction(SelectionClickBinding, IE_Pressed, this, &ASpacePlayerController::SelectComponent);
-
 	InputComponent->BindAxis(RotateYawBinding, this, &APlayerController::AddYawInput);
 	InputComponent->BindAxis(RotatePitchBinding, this, &APlayerController::AddPitchInput);
 	//InputComponent->BindAxis(RotateRollBinding, this, &APlayerController::AddRollInput);
 
+	InputComponent->BindAction(SelectionClickBinding, IE_Pressed, this, &ASpacePlayerController::SelectComponent);
 }
+
 
 void ASpacePlayerController::Tick(float DeltaTime)
 {
@@ -63,12 +52,20 @@ void ASpacePlayerController::HoverOnMode(EControllerStateEnum Mode)
 	switch (Mode)
 	{
 	case EControllerStateEnum::CSE_Build:
-		if (HoveredComponent->IsA<UAttachComponent>())
-		{
-			if(HoverActor)
-				HoverActor->Destroy();
-			HoverActor = SpawnSelectionActor(HoveredComponent->GetComponentTransform());
-		}
+		if (HoveredComponent)
+			if (HoveredComponent->IsA<UAttachComponent>())
+			{
+				if(HoverActor)
+					HoverActor->Destroy();
+				HoverActor = SpawnSelectionActor(HoveredComponent->GetComponentTransform());
+				if (HoverActor)
+					HoverActor->SetActive(false);
+			}
+			else { // Not a Attach component, no need to hover
+				if (HoverActor)
+					HoverActor->Destroy();
+			}
+		
 		break;
 	case EControllerStateEnum::CSE_Pilot:
 		break;
@@ -85,14 +82,12 @@ ASelectionActor * ASpacePlayerController::SpawnSelectionActor(const FTransform S
 	// first prepare the parameters
 	FActorSpawnParameters SpawnParam;
 	SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	SpawnParam.Owner = this;
+	SpawnParam.Owner = GetPawnOrSpectator(); 	// Obey your master
 	SpawnParam.bAllowDuringConstructionScript = true; // maybe not necessary but better be safe than sorry
 	// Spawn
 	auto NewSelectionActor = GetWorld()->SpawnActor<ASelectionActor>(SelectionActorClass, SpawnTransform, SpawnParam);
 	if (!NewSelectionActor)
 		return nullptr;
-	// Obey your master
-	NewSelectionActor->SetOwner(this);
 	return NewSelectionActor;
 }
 
@@ -154,4 +149,36 @@ void ASpacePlayerController::SetAim()
 {
 	// Call the blueprint implementation
 	SetAim_BP();
+}
+
+void ASpacePlayerController::SelectComponent()
+{
+	// Call Parent.
+	Super::SelectComponent();
+	
+	// Act differently depending on mode.
+	switch (SpaceState)
+	{
+	case EControllerStateEnum::CSE_Build:
+		if(SelectedComponent)
+			if (SelectedComponent->IsA<UAttachComponent>())
+			{
+				if (SelectionActor)
+					SelectionActor->Destroy();
+				SelectionActor = SpawnSelectionActor(HoveredComponent->GetComponentTransform());
+				if (SelectionActor)
+					SelectionActor->SetActive(true);
+			}
+			else if (SelectedComponent->IsA<UWidgetComponent>()) {
+				UE_LOG(LogTemp, Warning, TEXT(" Doing your stuff"));
+			}
+		break;
+	case EControllerStateEnum::CSE_Pilot:
+		break;
+	case EControllerStateEnum::CSE_Aim:
+		break;
+	default:
+		break;
+	}
+	OnSelect_BP();
 }

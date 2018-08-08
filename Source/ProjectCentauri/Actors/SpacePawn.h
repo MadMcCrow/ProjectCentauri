@@ -39,7 +39,7 @@ public:
 
 private:
 	/**
-	*	@brief ThrusterMeshComponent
+	*	@brief ThrusterMeshComponent property
 	*	Static mesh representing the Thruster
 	*/
 	UPROPERTY(Category = Mesh, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

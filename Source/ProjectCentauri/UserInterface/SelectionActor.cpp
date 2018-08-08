@@ -25,3 +25,9 @@ void ASelectionActor::Tick(float DeltaTime)
 
 }
 
+void ASelectionActor::SetActive(bool Active)
+{
+	bIsSelection = Active;
+	SetActive_BP(Active);
+}
+

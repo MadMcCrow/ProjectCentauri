@@ -15,6 +15,35 @@ class PROJECTCENTAURI_API ACentauriController : public APlayerController
 	GENERATED_BODY()
 public:
 	ACentauriController();
+
+public:
+
+	/**
+	*	@brief SelectionModeBinding Property
+	*	The name of the binding for togglingSelectionMode
+	*/
+	static const FName SelectionToggleBinding;
+
+	/**
+	*	@brief SelectionModeBinding Property
+	*	The name of the binding for togglingSelectionMode
+	*/
+	static const FName SelectionClickBinding;
+
+
+	/**
+	*	@brief SelectionModeBinding function
+	*	Prepare the bindings
+	*/
+	virtual void InitializeBindings();
+
+	/**
+	*	@brief SetupInputComponent function override
+	*	Enable the bindings
+	*	@see APlayerController
+	*/
+	virtual void SetupInputComponent() override;
+
 protected:
 
 	UPROPERTY()
@@ -71,7 +100,7 @@ public:
 	*	Select a cursor. is called by a binding (should be the left click)
 	*/
 	UFUNCTION()
-		void SelectComponent();
+		virtual void SelectComponent();
 
 	/**
 	*	@brief SelectComponent_BP function
@@ -85,7 +114,7 @@ public:
 	*	hover a component. is called in tick
 	*/
 	UFUNCTION()
-		bool MouseOverComponent();
+		virtual bool MouseOverComponent();
 
 	/**
 	*	@brief SelectComponent_BP function

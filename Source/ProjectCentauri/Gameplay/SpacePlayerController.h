@@ -34,30 +34,14 @@ public:
 	static const FName RotatePitchBinding;
 	static const FName RotateRollBinding;
 
-	/**
-	*	@brief SelectionModeBinding Property
-	*	The name of the binding for togglingSelectionMode
-	*/
-	static const FName SelectionToggleBinding;
 
-	/**
-	*	@brief SelectionModeBinding Property
-	*	The name of the binding for togglingSelectionMode
-	*/
-	static const FName SelectionClickBinding;
 
 	/**
 	*	@brief SelectionModeBinding function
-	*	Prepare the bindings
+	*	Setup the bindings
 	*/
-	virtual void InitializeBindings();
+	virtual void InitializeBindings() override;
 
-	/**
-	*	@brief SetupInputComponent function override
-	*	Enable the bindings
-	*	@see APlayerController
-	*/
-	virtual void SetupInputComponent() override;
 
 	/**
 	*	@brief Tick function override
@@ -72,8 +56,15 @@ public:
 	*	@brief SelectionActorClass property
 	*	class defining An actor allowing to show what's selected
 	*/
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Selection")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI|Selection")
 		TSubclassOf<class ASelectionActor> SelectionActorClass;
+
+	/**
+	*	@brief SelectionActorClass property
+	*	class defining An actor allowing to show what's selected
+	*/
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI|Building")
+		//TSubclassOf<class > BuildingMenu;
 
 protected:
 	/**
@@ -294,6 +285,18 @@ protected:
 	*/
 	UFUNCTION(BlueprintImplementableEvent, Category = "Centauri|Mode", meta = (DisplayName = "Set in aiming Mode"))
 		void SetAim_BP();
+
+	// OVerride to add selection effect;
+	virtual void SelectComponent() override;
+
+	/**
+	*	@brief OnSelect_BP function
+	*	Do things in Blueprint after Selection
+	*	@note : Not implemented in C++
+	*/
+	UFUNCTION(BlueprintImplementableEvent, Category = "Centauri|Mode", meta = (DisplayName = "On Select"))
+		void OnSelect_BP();
+
 
 
 
