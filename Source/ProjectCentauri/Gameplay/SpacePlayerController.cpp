@@ -83,7 +83,7 @@ ASelectionActor * ASpacePlayerController::SpawnSelectionActor(const FTransform S
 	FActorSpawnParameters SpawnParam;
 	SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	SpawnParam.Owner = GetPawnOrSpectator(); 	// Obey your master
-	//SpawnParam.bAllowDuringConstructionScript = false; // maybe not necessary but better be safe than sorry
+	SpawnParam.bAllowDuringConstructionScript = true; // maybe not necessary but better be safe than sorry
 	// Spawn
 	auto NewSelectionActor = GetWorld()->SpawnActor<ASelectionActor>(SelectionActorClass, SpawnTransform, SpawnParam);
 	if (!NewSelectionActor)
