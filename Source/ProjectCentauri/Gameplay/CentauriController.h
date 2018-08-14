@@ -6,8 +6,11 @@
 #include "GameFramework/PlayerController.h"
 #include "CentauriController.generated.h"
 
+
+
 /**
- * 
+ *	@brief ACentauriController Class
+ *	the base class for every player controller in Project centauri. 
  */
 UCLASS()
 class PROJECTCENTAURI_API ACentauriController : public APlayerController
@@ -61,8 +64,46 @@ protected:
 public:
 
 	/**
+	*	@brief GetRelativeCursorCoordinate function
+	*	Returns the Mouse position in a {(0,0) ,(1,1)} range via parameter
+	*	@param FVector2D Coordinate : The mouse position
+	*	@return bool : is the mouse inside the viewport
+	*/
+	UFUNCTION()
+		bool GetRelativeCursorCoordinate(FVector2D &Coordinate);
+
+	/**
+	*	@brief GetRelativeCursorCoordinate function
+	*	Returns the Mouse position in a {(0,0) ,(1,1)} range via parameter
+	*	@param FVector2D Coordinate : The mouse position
+	*	@return bool : is the mouse inside the viewport
+	*	@note: For BP only
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Centauri|Mouse", meta = (DisplayName = "Get Relative Cursor Coordinate"))
+		FORCEINLINE bool GetRelativeCursorCoordinate_BP(FVector2D &Coordinate) { return GetRelativeCursorCoordinate(Coordinate); }
+
+	/**
+	*	@brief GetRelativeCursorCoordinate function
+	*	Returns the Mouse position in a {(0,0) ,(1,1)} range via parameter
+	*	@param float BorderSize: the width of the border we should care about (0 is none, 1 is half the screen)
+	*	@return FVector2D :the direction and intensity of the direction we should move toward
+	*/
+	UFUNCTION()
+		FVector2D GetBorderDirection(float BorderSize);
+
+	/**
+	*	@brief GetRelativeCursorCoordinate function
+	*	Returns the Mouse position in a {(0,0) ,(1,1)} range via parameter
+	*	@param float BorderSize: the width of the border we should care about (0 is none, 1 is half the screen)
+	*	@return FVector2D :the direction and intensity of the direction we should move toward
+	*	@note: For BP only
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Centauri|Mouse", meta = (DisplayName = "Get Border direction"))
+		FORCEINLINE	FVector2D GetBorderDirection_BP(float BorderSize) {	return GetBorderDirection(BorderSize);}
+
+	/**
 	 *	@brief GetVisibleComponentUnderCursor function
-	 *	Fast an easy way of finding components under the mouse
+	 *	Fast and easy way of finding components under the mouse
 	 *	@return USceneComponent * : A component that's under the cursor, nullptr if you're pointing at the void
 	 */
 	UFUNCTION()

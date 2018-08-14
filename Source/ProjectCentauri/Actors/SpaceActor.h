@@ -58,11 +58,17 @@ public:
 
 
 private:
-	AActor * Owner;
+	
+	UPROPERTY()
+	APlayerController * Owner;
 
 public:
 
-	FORCEINLINE void SetOwner(AActor * NewOwner) { if (NewOwner) Owner = NewOwner; }
+	/**
+	*
+	*/
+	UFUNCTION()
+	FORCEINLINE void SetPlayerOwner(APlayerController * NewOwner) { if (NewOwner) Owner = NewOwner; }
 
 #if 0
 	// Team Interface
