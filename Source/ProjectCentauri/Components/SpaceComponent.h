@@ -7,7 +7,31 @@
 #include "SpaceComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+
+USTRUCT(BlueprintType)
+struct FSpaceSocket
+{
+	GENERATED_BODY()
+
+protected:
+	UPROPERTY()
+		bool bIsUsed;
+
+	UPROPERTY()
+		FName SocketName;
+
+	UPROPERTY()
+		FString SocketTag;
+
+public:
+
+	FSpaceSocket(FName Name = FName(), FString Tag = FString(), bool Used = false)
+	{
+		SocketName = Name; SocketTag = Tag; bIsUsed = Used;
+	}
+};
+
+UCLASS( ClassGroup=(SpaceActors), Blueprintable, meta=(BlueprintSpawnableComponent) )
 class PROJECTCENTAURI_API USpaceComponent : public USceneComponent
 {
 	GENERATED_BODY()
@@ -25,5 +49,25 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 		
-	
+public:
+	/**
+	 *	@brief AddComponent Function
+	 *	
+	 */
+	UFUNCTION()
+		virtual void AddComponent(TSubclassOf<USpaceComponent> ClassToAdd, FName SocketName );
+
+protected:
+
+
+private:
+
+	UPROPERTY()
+		TArray<FSpaceSocket> Sockets;
+
+	UFUNCTION()
+		virtual void SetSockets(class UMeshComponent * Setup);
+
+
+
 };
