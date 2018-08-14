@@ -1,21 +1,21 @@
 // Copyright 2018 Noe PERARD-GAYOT
 
-#include "SpaceActorRootComponent.h"
+#include "SpaceComponent.h"
 
 
 // Sets default values for this component's properties
-USpaceActorRootComponent::USpaceActorRootComponent()
+USpaceComponent::USpaceComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
 }
 
 
 // Called when the game starts
-void USpaceActorRootComponent::BeginPlay()
+void USpaceComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -25,7 +25,7 @@ void USpaceActorRootComponent::BeginPlay()
 
 
 // Called every frame
-void USpaceActorRootComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void USpaceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 

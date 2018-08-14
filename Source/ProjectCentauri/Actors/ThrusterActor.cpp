@@ -2,7 +2,6 @@
 
 #include "ThrusterActor.h"
 #include "Components/StaticMeshComponent.h"
-#include "SpacePawn.h"
 #include "PhysicsEngine/PhysicsThrusterComponent.h"
 
 

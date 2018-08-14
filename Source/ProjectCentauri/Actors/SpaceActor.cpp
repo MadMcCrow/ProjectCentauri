@@ -41,3 +41,13 @@ void ASpaceActor::Tick(float DeltaTime)
 
 }
 
+FBox ASpaceActor::CalculateComponentsBoundingBoxInLocalSpace(bool bNonColliding) const 
+{
+
+	auto Actors = GetAllAttachedActors();
+	FBox BoundingBox = Super::CalculateComponentsBoundingBoxInLocalSpace(bNonColliding);
+	for (auto it : Actors)
+		BoundingBox.ExpandBy(it->CalculateComponentsBoundingBoxInLocalSpace().GetExtent());
+	return BoundingBox;
+}
+

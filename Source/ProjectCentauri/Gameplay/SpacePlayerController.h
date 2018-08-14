@@ -56,7 +56,7 @@ public:
 	*	@brief SelectionActorClass property
 	*	class defining An actor allowing to show what's selected
 	*/
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI|Selection")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Centauri|UI|Selection")
 		TSubclassOf<class ASelectionActor> SelectionActorClass;
 
 	/**
@@ -98,7 +98,7 @@ public:
 	*	@brief HoverOnMode function
 	*	Allow for handling Hovering depending on Mode
 	*	@param bool Mode : the mode to use
-	*	@note : you should feed it the current mode
+	*	@note you should feed it the current mode
 	*/
 	UFUNCTION()
 		void HoverOnMode(EControllerStateEnum Mode);
@@ -119,7 +119,7 @@ public:
 	 *	@brief SetSelectionMode_BP function
 	 *	Allow for Changing mode of cursor
 	 *	@param bool IsSelectionMode : true to enable selection. false to disable.
-	 *	@note : For Blueprints to implement further behaviour.
+	 *	@note For Blueprints to implement further behaviour.
 	 */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Centauri", meta = (DisplayName = "Selection Enabled"))
 		void SetSelectionMode_BP(bool IsSelectionMode);
@@ -136,7 +136,7 @@ public:
 	 *	@brief ToggleSelectionMode_BP function
 	 *	Allow for Changing mode of cursor
 	 *	@param bool IsSelectionMode : true to enable selection. false to disable.
-	 *	@note : For Blueprints to implement further behaviour.
+	 *	@note For Blueprints to implement further behaviour.
 	 */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Centauri", meta = (DisplayName = "Toggle selection"))
 		void ToggleSelectionMode_BP();
@@ -154,7 +154,7 @@ public:
 	 *	@brief GetSelectedComponent function
 	 *	Safe way to access SelectedComponent
 	 *	@return USceneComponent * : The component selected or NULL if nothing is selected
-	 *	@note : For Blueprints.
+	 *	@note For Blueprints.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Centauri", meta = (DisplayName = "Get Selected Component"))
 		FORCEINLINE class USceneComponent * GetSelectedComponent_BP() const { return GetSelectedComponent(); }
@@ -172,7 +172,7 @@ public:
 	*	@brief GetSelectedComponent function
 	*	Safe way to access bSelectionEnabled
 	*	@return bool : true if in selection mode, false otherwise
-	*	@note : For Blueprints.
+	*	@note For Blueprints.
 	*/
 	UFUNCTION(BlueprintPure, Category = "Centauri", meta = (DisplayName = "Selection Mode Enabled ?"))
 		FORCEINLINE bool IsSelectionMode_BP() const { return IsSelectionMode(); }
@@ -190,7 +190,7 @@ protected:
 	/**
 	 *	@brief DisplaySelection_BP function
 	 *	Allow to show on UI the selection
-	 *	@note : Not implemented in C++
+	 *	@note Not implemented in C++
 	 */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Centauri", meta = (DisplayName = "Display Selection Component"))
 		void DisplaySelection_BP();
@@ -251,7 +251,7 @@ protected:
 	/**
 	*	@brief DisplaySelection_BP function
 	*	Setup the building Mode
-	*	@note : Not implemented in C++
+	*	@note Not implemented in C++
 	*/
 	UFUNCTION(BlueprintImplementableEvent, Category = "Centauri|Mode", meta = (DisplayName = "Set in building Mode"))
 		void SetBuilding_BP();
@@ -266,7 +266,7 @@ protected:
 	/**
 	*	@brief DisplaySelection_BP function
 	*	Setup the Flying Mode
-	*	@note : Not implemented in C++
+	*	@note Not implemented in C++
 	*/
 	UFUNCTION(BlueprintImplementableEvent, Category = "Centauri|Mode", meta = (DisplayName = "Set in flying Mode"))
 		void SetPilot_BP();
@@ -281,7 +281,7 @@ protected:
 	/**
 	*	@brief DisplaySelection_BP function
 	*	Setup the Aiming Mode
-	*	@note : Not implemented in C++
+	*	@note Not implemented in C++
 	*/
 	UFUNCTION(BlueprintImplementableEvent, Category = "Centauri|Mode", meta = (DisplayName = "Set in aiming Mode"))
 		void SetAim_BP();
@@ -292,7 +292,7 @@ protected:
 	/**
 	*	@brief OnSelect_BP function
 	*	Do things in Blueprint after Selection
-	*	@note : Not implemented in C++
+	*	@note Not implemented in C++
 	*/
 	UFUNCTION(BlueprintImplementableEvent, Category = "Centauri|Mode", meta = (DisplayName = "On Select"))
 		void OnSelect_BP();

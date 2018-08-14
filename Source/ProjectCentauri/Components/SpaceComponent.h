@@ -4,27 +4,24 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
-#include "SpaceActorRootComponent.generated.h"
+#include "SpaceComponent.generated.h"
 
-/**
- * @brief The USpaceActorRootComponent class
- * This represents the base of a space actor and can be derived to Create whole components representing ships elements.
- */
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PROJECTCENTAURI_API USpaceActorRootComponent : public USceneComponent
+class PROJECTCENTAURI_API USpaceComponent : public USceneComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	USpaceActorRootComponent();
+	USpaceComponent();
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:	
-	// Will not be called
+	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 		

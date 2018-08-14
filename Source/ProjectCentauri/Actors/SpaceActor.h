@@ -56,19 +56,60 @@ public:
 	// Isn't called nor do anything
 	virtual void Tick(float DeltaTime) override;
 
+	// Add the childs to the size.
+	virtual FBox CalculateComponentsBoundingBoxInLocalSpace(bool bNonColliding = false) const override;
+
+
 
 private:
 	
+	/**
+	 *	@brief PlayerOwner Property
+	 *	The player that "Owns" that actor.
+	 */
 	UPROPERTY()
-	APlayerController * Owner;
+	class APlayerController * PlayerOwner;
 
 public:
 
 	/**
-	*
+	*	@brief SetPlayerOwner function
+	*	Set a new player owner of this actor.
+	*	@param APlayerController * NewOwner : The player that "Owns" that actor.
+	*	@return bool : true if the assignement is succesful, false otherwise
 	*/
 	UFUNCTION()
-	FORCEINLINE void SetPlayerOwner(APlayerController * NewOwner) { if (NewOwner) Owner = NewOwner; }
+		FORCEINLINE bool SetPlayerOwner(APlayerController * NewOwner) { if (NewOwner) return (PlayerOwner = NewOwner); return false; }
+
+	/**
+	 *	@brief SetPlayerOwner_BP
+	 *	Set a new player owner of this actor.
+	 *	@param APlayerController * NewOwner : The player that "Owns" that actor.
+	 *	@return bool : true if the assignement is succesful, false otherwise
+	 *	@note For blueprints only.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Centauri|Player", meta = (DisplayName = "Set Player Owner") )
+		FORCEINLINE bool SetPlayerOwner_BP(APlayerController * NewOwner) { return SetPlayerOwner(NewOwner); }
+
+	/**
+	*	@brief GetPlayerOwner function
+	*	Get the player that "Owns" that actor.
+	*	@return APlayerController * :The stored Player owner
+	*/
+	UFUNCTION()
+		FORCEINLINE APlayerController * GetPlayerOwner() const { return PlayerOwner; }
+
+	/**
+	*	@brief GetPlayerOwner function
+	*	Get the player that "Owns" that actor.
+	*	@return APlayerController * :The stored Player owner
+	*	@note For blueprints only.
+	*/
+	UFUNCTION(BlueprintPure, Category = "Centauri|Player", meta = (DisplayName = "Get Player Owner"))
+		FORCEINLINE APlayerController * GetPlayerOwner_BP() const { return PlayerOwner; }
+
+
+
 
 #if 0
 	// Team Interface
