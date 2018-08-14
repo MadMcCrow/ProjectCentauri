@@ -19,6 +19,10 @@ public:
 	void ApplyMovement(FVector Input);
 	virtual void BeginPlay() override;
 
+
+	UFUNCTION()
+		void DoThrust();
+
 	void SetAcceleration(float A);
 private:
 	FTransform WorldSpawnTransform;

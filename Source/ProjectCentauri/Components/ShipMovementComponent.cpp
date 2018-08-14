@@ -1,3 +1,4 @@
+#include "ShipMovementComponent.h"
 // Copyright 2018 Noe PERARD-GAYOT
 
 #include "ShipMovementComponent.h"
@@ -33,6 +34,10 @@ void UShipMovementComponent::ApplyMovement(FVector Input)
 void UShipMovementComponent::BeginPlay()
 {
 	WorldSpawnTransform = OwnerRef->GetActorTransform();
+}
+
+void UShipMovementComponent::DoThrust()
+{
 }
 
 void UShipMovementComponent::SetAcceleration(float A)
