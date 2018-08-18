@@ -4,3 +4,9 @@
 
 
 // Add default functionality here for any IPowerInterface functions that are not pure virtual.
+
+void IPowerInterface::ConsumeEnergy() 
+{
+
+}
+ 
